@@ -1,8 +1,8 @@
 import { db } from '@vercel/postgres';
 
-const client = await db.connect();
+export const dynamic = 'force-dynamic';
 
-async function listInvoices() {
+async function listInvoices(client: any) {
   const data = await client.sql`
     SELECT invoices.amount, customers.name
     FROM invoices
@@ -14,8 +14,10 @@ async function listInvoices() {
 }
 
 export async function GET() {
+  const client = await db.connect();
+
   try {
-    return Response.json(await listInvoices());
+    return Response.json(await listInvoices(client));
   } catch (error) {
     return Response.json({ error }, { status: 500 });
   }
