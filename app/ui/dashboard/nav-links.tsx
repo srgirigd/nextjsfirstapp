@@ -8,8 +8,8 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { Suspense } from 'react';
 
-// Map of links to display in the side navigation.
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
   {
@@ -20,7 +20,7 @@ const links = [
   { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
 ];
 
-export default function NavLinks() {
+function NavLinksContent() {
   const pathname = usePathname();
 
   return (
@@ -44,5 +44,13 @@ export default function NavLinks() {
         );
       })}
     </>
+  );
+}
+
+export default function NavLinks() {
+  return (
+    <Suspense fallback={null}>
+      <NavLinksContent />
+    </Suspense>
   );
 }
