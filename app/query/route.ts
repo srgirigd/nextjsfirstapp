@@ -1,7 +1,5 @@
 import { db } from '@vercel/postgres';
 
-export const dynamic = 'force-dynamic';
-
 async function listInvoices(client: any) {
   const data = await client.sql`
     SELECT invoices.amount, customers.name
