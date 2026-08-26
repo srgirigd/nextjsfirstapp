@@ -12,10 +12,17 @@ async function listInvoices(client: any) {
 }
 
 export async function GET() {
-  const client = await db.connect();
+  if (!process.env.POSTGRES_URL) {
+    return Response.json(
+      { message: 'Database connection string not configured.' },
+      { status: 200 }
+    );
+  }
 
   try {
-    return Response.json(await listInvoices(client));
+    const client = await db.connect();
+    const invoices = await listInvoices(client);
+    return Response.json(invoices);
   } catch (error) {
     return Response.json({ error }, { status: 500 });
   }
