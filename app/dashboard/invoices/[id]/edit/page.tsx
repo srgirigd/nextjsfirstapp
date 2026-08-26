@@ -4,7 +4,12 @@ import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
-async function EditFormWrapper({ id }: { id: string }) {
+async function EditFormWrapper({
+  paramsPromise,
+}: {
+  paramsPromise: Promise<{ id: string }>;
+}) {
+  const { id } = await paramsPromise;
   const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
@@ -17,10 +22,7 @@ async function EditFormWrapper({ id }: { id: string }) {
   return <Form invoice={invoice} customers={customers} />;
 }
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const id = params.id;
-
+export default function Page(props: { params: Promise<{ id: string }> }) {
   return (
     <main>
       <Breadcrumbs
@@ -28,13 +30,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           { label: 'Invoices', href: '/dashboard/invoices' },
           {
             label: 'Edit Invoice',
-            href: `/dashboard/invoices/${id}/edit`,
+            href: '/dashboard/invoices',
             active: true,
           },
         ]}
       />
-      <Suspense fallback={<div>Loading...</div>}>
-        <EditFormWrapper id={id} />
+      <Suspense fallback={<div>Loading invoice...</div>}>
+        <EditFormWrapper paramsPromise={props.params} />
       </Suspense>
     </main>
   );
